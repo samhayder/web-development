@@ -29,6 +29,9 @@
   border-radius: 5px;
   background-color: rgb(226, 234, 213);
   margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-style: italic;
 }
 
 .lights {
