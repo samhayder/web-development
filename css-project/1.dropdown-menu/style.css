@@ -66,3 +66,33 @@ html,body{
 .dropdown_menu_area.active .menu_toggler {
   width: 30%;
 }
+
+.menu_toggler::before{
+  position: absolute;
+  content: "";
+  width: 20px;
+  height: 2px;
+  top: 50%;
+  left: 50%;
+  background-color: #4e65ff;
+  transition: all 1s ease;
+}
+.menu_toggler::after{
+  position: absolute;
+  content: "";
+  width: 20px;
+  height: 2px;
+  top: 60%;
+  left: 50%;
+  background-color: #4e65ff;
+  transition: all 1s ease;
+}
+.close_toggler.menu_toggler::before{
+  transform: rotate(50deg);
+  background-color: red;
+}
+.close_toggler.menu_toggler::after{
+  transform: rotate(135deg);
+  background-color: red;
+  top: 50%;
+}
