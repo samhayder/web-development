@@ -14,10 +14,12 @@ function searchAlert() {
     searchLimit.classList.remove("warning");
   }
 
-  if (charCount < 0) {
+  if (charCount === 0) {
     searchInput.style.backgroundColor = "red";
+    // searchInput.readOnly = true;
   } else {
     searchInput.style.backgroundColor = "rgba(147, 5, 169, 0.4)";
+  // searchInput.readOnly = false;
   }
   
 }

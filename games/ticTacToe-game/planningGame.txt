@@ -1,0 +1,10 @@
+=> Configure Player Names -- Form with input field in modal overlay; also validate user input and show validation feedback
+
+=> (Re-)Start Game -- "Start Game" button should clear current game board or "Game Over" message
+
+=> Turn-based Game play -- Turns should switch automatically between the tow player has his/her own symbol
+
+=> Select Fields & Check for Winner -- Game fields are clickable & the player's symbol is displayed; Check for winner (regular Tic-Tac-Tor rules) after every Turn
+
+
+=> Show "Game Over" Window -- Present "Game Over" message which highlights winner (or draw) once the game ends
