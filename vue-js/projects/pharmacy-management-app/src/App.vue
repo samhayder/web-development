@@ -2,14 +2,18 @@
 	<div>
 		<Login></Login>
 
-		<div class="absolute top-5 right-5 z-50">
+		<TransitionGroup
+			class="absolute top-5 right-5 z-50"
+			name="toast-slide"
+			tag="div"
+		>
 			<Toast
 				v-for="(toast, i) in toasts"
 				:key="i"
 				:toastType="toast.type"
 				:toastMessage="toast.message"
 			></Toast>
-		</div>
+		</TransitionGroup>
 	</div>
 </template>
 
@@ -55,4 +59,14 @@
 	};
 </script>
 
-<style lang=""></style>
+<style>
+	.toast-slide-enter-active,
+	.toast-slide-leave-active {
+		transition: all 0.25s ease;
+	}
+	.toast-slide-enter-from,
+	.toast-slide-leave-to {
+		opacity: 0;
+		transform: translateX(100px);
+	}
+</style>
