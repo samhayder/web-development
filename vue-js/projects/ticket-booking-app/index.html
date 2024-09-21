@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ticket Booking App - vue js</title>
+
+    <!-- Vue js script fill -->
+    <script src="vue.global.js"></script>
+    <!-- Tailwind css script cdn path -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      .seat:nth-child(4n-2) {
+        margin-right: 13px;
+      }
+      .seat:nth-child(4n-1) {
+        margin-left: 14px;
+      }
+      .seat_sold {
+        background: #ff0000;
+        font-weight: 800;
+        color: #fff;
+        cursor: not-allowed !important;
+      }
+      .seat_available {
+        background: #fff;
+      }
+      .seat_booked {
+        background: #333333;
+        color: #fff;
+      }
+      .seat_selected {
+        background: #00ff00;
+      }
+
+      .ticket_success_overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        padding: 1rem;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        border: 1px solid #d1d1d1;
+        border-radius: 15px;
+        box-shadow: 0 10px 5px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="w-full h-full mx-auto pb-5">
+      <h2 class="text-center bg-pink-500 text-white text-4xl py-5 italic">
+        Ticket Booking App
+      </h2>
+
+      <div
+        class="ticket_display w-[80vw] md:w-[50vw] h-fit p-2 mx-auto mt-4 border border-2 relative">
+        <!-- ***Ticket Success Overlay*** -->
+        <div class="ticket_success_overlay" v-if="ticketConfirm === true">
+          <p
+            class="text-green-700 text-lg text-center border-b border-gray-500">
+            Ticket Confirm!
+          </p>
+
+          <div class="confirm_ticket_status my-5 py-5">
+            <table class="w-full table-auto">
+              <tr>
+                <td class="border border-gray-500 font-bold px-3 py-1">
+                  Passenger Name
+                </td>
+                <td class="border border-gray-500 px-3 py-1">{{name}}</td>
+              </tr>
+              <tr>
+                <td class="border border-gray-500 font-bold px-3 py-1">
+                  Passenger Contact
+                </td>
+                <td class="border border-gray-500 px-3 py-1">{{mobile}}</td>
+              </tr>
+              <tr>
+                <td class="border border-gray-500 font-bold px-3 py-1">
+                  Seats
+                </td>
+                <td class="border border-gray-500 px-3 py-1">
+                  <div v-for="(set,i) in selectedSeats">
+                    <div>{{set.name}}</div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="border border-gray-500 font-bold px-3 py-1">
+                  Total Cost
+                </td>
+                <td class="border border-gray-500 px-3 py-1 text-lg font-bold">
+                  Tk. {{totalPrice}}
+                </td>
+              </tr>
+            </table>
+
+            <button
+              class="w-full px-4 py-2 border bg-blue-700 my-4 rounded-lg text-white cursor-pointer"
+              @click="resetTicket">
+              Seat Book Agin
+            </button>
+          </div>
+        </div>
+        <!-- ***End of Ticket Success Overlay*** -->
+
+        <div class="ticket_status py-3 min-h-6 flex gap-3 md:gap-6">
+          <div
+            class="flex gap-1 items-center"
+            v-for="(value, key) in seatStatus">
+            <p :style="{background: value.color}" class="w-6 h-4 border"></p>
+            <p>{{value.text}}</p>
+          </div>
+        </div>
+        <!-- end of ticket status -->
+
+        <div class="flex">
+          <div
+            class="seats_information w-[60%] md:w-[40%] h-[80%] border-2 p-2">
+            <div class="bus_top flex justify-between text-center">
+              <p class="py-2 px-6 border-2 w-[43%]">Door</p>
+              <p class="py-2 px-6 border-2 w-[43%]">Driver</p>
+            </div>
+
+            <div class="seats flex flex-wrap justify-between text-center">
+              <div
+                class="seat border w-[20%] my-2 cursor-grabbing rounded-sm hover:shadow-md"
+                :class="{
+              'seat_sold':seat.type === 'sold',
+              'seat_available':seat.type === 'available',
+              'seat_booked':seat.type === 'booked',
+              'seat_selected':seat.type === 'selected',
+            }"
+                v-for="(seat,i) in seats"
+                :key="seat.name"
+                @click="targetedSeatHandler(i)">
+                {{seat.name}}
+              </div>
+            </div>
+          </div>
+          <!-- end of seats information -->
+
+          <div
+            class="seats_booked_information w-[40%] md:w-[60%] h-[80%] p-2 relative">
+            <div
+              class="h-[50vh] grid content-center text-center"
+              v-if="selectedSeats.length === 0">
+              <p>
+                No Selected Seat <br />
+                Select any Available seat
+              </p>
+            </div>
+
+            <div class="cart" v-else>
+              <h3 class="font-bold">Selected Seats</h3>
+              <table class="table-auto border-collapse border-2 w-full mt-2">
+                <thead>
+                  <tr>
+                    <td class="border p-2 font-bold">Seat</td>
+                    <td class="border p-2 font-bold">Price</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(set,i) in selectedSeats" :key="set.name">
+                    <td class="border p-1">{{set.name}}</td>
+                    <td class="border p-1">Tk. {{set.price}}</td>
+                  </tr>
+                  <tr v-if="appliedCoupon !== null">
+                    <td class="border p-2 font-semibold">Discount</td>
+                    <td class="border p-2 font-bold text-red-600">
+                      Tk. -{{appliedCoupon.discount}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="border p-2 font-bold">Total</td>
+                    <td class="border p-2 font-bold">Tk. {{totalPrice}}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="coupon_code">
+                <p
+                  class="w-[100%] md:flex md:justify-between my-2"
+                  v-if="appliedCoupon === null">
+                  Have a coupon?
+                  <input
+                    type="text"
+                    placeholder="10 Digit coupon"
+                    class="w-full md:w-[50%] md:ml-3 px-2 py-1 border"
+                    v-model="couponCode" />
+                </p>
+
+                <p class="my-2" v-else>
+                  Coupon Code:
+                  <span class="font-bold">{{appliedCoupon.code}}</span>
+                </p>
+              </div>
+              <!-- end of coupon code -->
+
+              <div class="user_information w-full my-3">
+                <input
+                  type="text"
+                  placeholder="Your full name"
+                  v-model="name"
+                  class="border px-2 py-1 w-full md:w-[48%] mr-3 mb-3 md:mb-0" />
+                <input
+                  type="text"
+                  placeholder="Mobile number"
+                  v-model="mobile"
+                  class="border px-2 py-1 w-full md:w-[48%]" />
+
+                <button
+                  class="w-full px-4 py-2 border bg-blue-700 my-4 rounded-lg text-white cursor-pointer"
+                  @click="confirmTicket">
+                  Confirm
+                </button>
+              </div>
+              <!-- end of user information -->
+            </div>
+          </div>
+          <!-- end of seats booked information -->
+        </div>
+      </div>
+      <!-- end of ticket display -->
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

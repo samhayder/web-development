@@ -1,0 +1,32 @@
+                        if (c !== key && flags.aliases[key].indexOf(c) === -1) {
+                                flags.aliases[key].push(c);
+                                newAliases[c] = true;
+                            }
+                        }
+                    });
+                    // For "--optionName", also set argv['option-name']
+                    flags.aliases[key].concat(key).forEach(function (x) {
+                        if (x.length > 1 && /[A-Z]/.test(x) && configuration['camel-case-expansion']) {
+                            const c = decamelize(x, '-');
+                            if (c !== key && flags.aliases[key].indexOf(c) === -1) {
+                                flags.aliases[key].push(c);
+                                newAliases[c] = true;
+                            }
+                        }
+                    });
+                    flags.aliases[key].forEach(function (x) {
+                        flags.aliases[x] = [key].concat(flags.aliases[key].filter(function (y) {
+                            return x !== y;
+                        }));
+                    });
+                });
+            });
+        }
+        function checkAllAliases(key, flag) {
+            const toCheck = [].concat(flags.aliases[key] || [], key);
+            const keys = Object.keys(flag);
+            const setAlias = toCheck.find(key => keys.includes(key));
+            return setAlias ? flag[setAlias] : false;
+        }
+        function hasAnyFlag(key) {
+    
