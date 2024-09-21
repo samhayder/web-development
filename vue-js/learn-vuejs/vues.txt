@@ -1,5 +1,0 @@
-=> Attribute
-  v-bind:href=""; / :href="";
-  v-html=""; // bind HTML code
-
-=> Events  v-on:event=""; / @event=""'
