@@ -7,6 +7,12 @@
 		UserPlusIcon,
 	} from "@heroicons/vue/24/outline";
 
+	import useStudent from "../../composable/studentAPI";
+	import { onMounted } from "vue";
+	const { studentData, error, getStudentsList } = useStudent();
+	// call all students list
+	onMounted(getStudentsList);
+
 	const trashStudentData = async (id) => {
 		if (!window.confirm("Are you remove this data")) {
 			return;
@@ -36,19 +42,19 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td class="text-center">1</td>
-					<td>Samsuddin</td>
-					<td>sams.seul@gamil.com</td>
+				<tr v-for="({ name, email, id }, i) in studentData" :key="i">
+					<td class="text-center">{{ ++i }}</td>
+					<td>{{ name }}</td>
+					<td>{{ email }}</td>
 					<td class="flex justify-center gap-4">
-						<RouterLink :to="{ name: 'view', params: { id: 1 } }">
+						<RouterLink :to="{ name: 'view', params: { id: id } }">
 							<div class="group relative">
 								<span class="icon_btn_message">View</span>
 								<EyeIcon class="icon_btn" />
 							</div>
 						</RouterLink>
 
-						<RouterLink :to="{ name: 'edit', params: { id: 1 } }">
+						<RouterLink :to="{ name: 'edit', params: { id: id } }">
 							<div class="group relative">
 								<span class="icon_btn_message">Edit</span>
 								<PencilIcon class="icon_btn" />
@@ -57,7 +63,10 @@
 
 						<div class="group relative">
 							<span class="icon_btn_message">Trash</span>
-							<TrashIcon class="icon_btn text-red-500" @click="trashStudentData(1)" />
+							<TrashIcon
+								class="icon_btn text-red-500"
+								@click="trashStudentData(id)"
+							/>
 						</div>
 					</td>
 				</tr>
