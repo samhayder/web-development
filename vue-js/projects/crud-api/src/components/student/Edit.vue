@@ -1,10 +1,29 @@
 <script setup>
-	import { RouterLink } from "vue-router";
+	import { RouterLink, useRoute } from "vue-router";
+	import { onMounted } from "vue";
 	import { ListBulletIcon, BookmarkIcon } from "@heroicons/vue/24/outline";
+	import useStudent from "../../composable/studentAPI";
+	import swal from "sweetalert";
 
-	function updateForm() {
-		console.log("Update form");
-	}
+	const { studentData, error, statusCode, updateStudent, showSingleStudent } =
+		useStudent();
+	const { params } = useRoute();
+
+	onMounted(async () => {
+		await showSingleStudent(params.id);
+	});
+
+	const updateForm = async () => {
+		await updateStudent(params.id, studentData.value);
+
+		if (statusCode.value === 200) {
+			swal("Good job!", "Successfully updated student data", "success", {
+				timer: 2000,
+			});
+		} else {
+			swal("Oops!", error.value, "error");
+		}
+	};
 </script>
 
 <template>
@@ -22,15 +41,15 @@
 		<form @submit.prevent="updateForm" class="w-[75vw] mx-auto p-5 shadow-md">
 			<div class="form_group flex items-center my-2">
 				<label for="ID">ID:</label>
-				<input type="text" id="ID" readonly disabled />
+				<input type="text" id="ID" readonly disabled v-model="studentData.id" />
 			</div>
 			<div class="form_group flex items-center my-2">
 				<label for="name">Name:</label>
-				<input type="text" id="name" required />
+				<input type="text" id="name" required v-model="studentData.name" />
 			</div>
 			<div class="form_group flex items-center my-2">
 				<label for="email">Email:</label>
-				<input type="email" id="email" required />
+				<input type="email" id="email" required v-model="studentData.email" />
 			</div>
 
 			<div class="control_button mt-8 flex justify-center">

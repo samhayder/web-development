@@ -2,6 +2,10 @@
 	import { reactive } from "vue";
 	import { RouterLink } from "vue-router";
 	import { PlusIcon, ListBulletIcon } from "@heroicons/vue/24/outline";
+	import useStudent from "../../composable/studentAPI";
+	import swal from "sweetalert";
+
+	const { studentData, error, statusCode, createStudent } = useStudent();
 
 	const formData = reactive({
 		name: "",
@@ -9,7 +13,18 @@
 	});
 
 	const handleForm = async () => {
-		console.log("Form submitted", formData);
+		await createStudent(formData);
+
+		if (statusCode.value === 201) {
+			swal("Good job!", "Successfully added student data", "success", {
+				timer: 2000,
+			});
+		} 
+		else {
+			swal("Oops!", error.value, "error");
+		}
+
+		document.querySelector("#form_submitted").reset();
 	};
 </script>
 
@@ -25,7 +40,11 @@
 			</RouterLink>
 		</header>
 
-		<form @submit.prevent="handleForm" class="w-[75vw] mx-auto p-5 shadow-md">
+		<form
+			@submit.prevent="handleForm"
+			class="w-[75vw] mx-auto p-5 shadow-md"
+			id="form_submitted"
+		>
 			<div class="form_group flex items-center my-2">
 				<label for="name">Name:</label>
 				<input

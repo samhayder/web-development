@@ -1,5 +1,5 @@
 <script setup>
-	import { RouterLink } from "vue-router";
+	import { RouterLink, useRoute } from "vue-router";
 	import {
 		EyeIcon,
 		PencilIcon,
@@ -9,15 +9,30 @@
 
 	import useStudent from "../../composable/studentAPI";
 	import { onMounted } from "vue";
-	const { studentData, error, getStudentsList } = useStudent();
+	import swal from "sweetalert";
+
+	const { studentData, error, statusCode, getStudentsList, deleteStudent } =
+		useStudent();
+	const { params } = useRoute();
+
 	// call all students list
-	onMounted(getStudentsList);
+	onMounted(async () => {
+		await getStudentsList();
+
+		if (error.value) {
+			swal("Oops!", error.value, "error");
+		}
+	});
 
 	const trashStudentData = async (id) => {
-		if (!window.confirm("Are you remove this data")) {
+		if (!swal("Remove", "Are you sure you want to delete this student?", "warning")
+		) {
 			return;
 		}
-		console.log("Removed");
+
+		await deleteStudent(id);
+		await getStudentsList();
+
 	};
 </script>
 
@@ -32,7 +47,12 @@
 			</RouterLink>
 		</header>
 
-		<table>
+		<!-- Show error message -->
+		<div v-if="error" class="text-center text-red-500 py-5 text-2xl">
+			{{ error }}
+		</div>
+
+		<table v-else>
 			<thead>
 				<tr>
 					<td>No</td>

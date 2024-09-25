@@ -1,6 +1,14 @@
 <script setup>
-	import { RouterLink } from "vue-router";
+	import { onMounted } from "vue";
+	import { RouterLink, useRoute } from "vue-router";
 	import { UserPlusIcon, ListBulletIcon } from "@heroicons/vue/24/outline";
+	import useStudent from "../../composable/studentAPI";
+	const { studentData, error, showSingleStudent } = useStudent();
+	const { params } = useRoute();
+
+	onMounted(async () => {
+		await showSingleStudent(params.id);
+	});
 </script>
 
 <template>
@@ -10,8 +18,8 @@
 			<h2 class="font-bold text-3xl leading-[80px]">Single Student Details</h2>
 			<RouterLink :to="{ name: 'list' }">
 				<button class="route_btn text-white">
-          <ListBulletIcon class="w-6 h-6" />
-        </button>
+					<ListBulletIcon class="w-6 h-6" />
+				</button>
 			</RouterLink>
 		</header>
 
@@ -25,9 +33,9 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td class="text-center">1</td>
-					<td>Samsuddin</td>
-					<td>sams.seul@gamil.com</td>
+					<td class="text-center">{{ studentData.id }}</td>
+					<td>{{ studentData.name }}</td>
+					<td>{{ studentData.email }}</td>
 				</tr>
 			</tbody>
 		</table>
